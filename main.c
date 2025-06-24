@@ -20,6 +20,40 @@
 #define vd_on PORTB |= (1<<5)
 #define vd_off PORTB &= ~(1<<5)
 
+//Definindo as funções
+void vermelho()
+{
+	vm_on;
+	am_off;
+	vd_off;
+	vmp_off;
+	vdp_on;
+}
+
+void amarelo()
+{
+	vm_off;
+	am_on;
+	vd_off;
+	vmp_on;
+	vdp_off;
+}
+
+void verde()
+{
+	vm_off;
+	am_off;
+	vd_on;
+	vmp_off;
+	vdp_off;
+}
+
+void pisca()
+{
+	vd_off;
+	PORTB ^= (1<<1);
+}
+
 
 int main(void) 
 {
@@ -29,17 +63,38 @@ int main(void)
 	
 	//Saídas
 	DDRB |= ((1<<1)|(1<<2)|(1<<3)|(1<<4)|(1<<5));
-	
+	unsigned int c = 0;
 
     while (1) 
     {
-//
-		//Escrevendo nas saídas para testar a simulação
-		vm_on;
-		am_on;
-		vd_on;
-		vmp_on;
-		vdp_on;
-
+		if(c < 3000)
+		{
+			amarelo();
+		}
+		else if(c < 15000)
+		{
+			vermelho();
+		}
+		else if(c < 18000)
+		{
+			if((c % 500) == 0)
+			{
+				pisca();
+			}
+		}
+		else if(c < 50000)
+		{
+			verde();
+			if(!(PINB & (1<<0))) //B0
+			{
+				c = 50000;	
+			}
+		}
+		else if(c < 60000)
+		{
+			verde();
+		}
+		_delay_ms(1);
+		c++;
 	}
 }
